@@ -1,0 +1,10 @@
+GOAL.other:What a save! What a save! What a save!
+GOAL.other:{game.teams.focus.name} bad lol
+GOAL.other:{play.players.Scorer.fullName} > {play.players.Goalie.fullName}
+GOAL.other::eggplant: :sweat_drops: :eggplant: :sweat_drops: :eggplant: :sweat_drops:
+GOAL.focus:i cri :(
+GOAL.focus:no problem
+GOAL.focus:we gonna come back
+GOAL.focus:{game.teams.other.name} still better.
+FINAL.other:ayy gottem lmao
+FINAL.focus:im gonna kill myself :(

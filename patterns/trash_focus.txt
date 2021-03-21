@@ -1,0 +1,17 @@
+MISSED_SHOT.focus:nice shot lmao
+SHOT.focus:close one
+SHOT.focus:i wasnt even worried
+SHOT.focus:try harder next time
+GOAL.other:What a save! What a save! What a save!
+GOAL.other:Thanks {play.players.Goalie.fullName}
+GIVEAWAY.focus:{play.players.PlayerID.fullName} can't even keep the puck lmao
+GOAL.other:{teams.focus.name} bad lol
+BLOCKED_SHOT.other:Epic save
+BLOCKED_SHOT.other:Not even difficult
+PERIOD_START:im so hype
+GOAL.focus:i cri :(
+FINAL.other:we got {play.about.focus.goals}/{play.about.focus.shotsOnGoal} shots.
+FINAL.focus:they got {play.about.other.goals}/{play.about.other.shotsOnGoal} shots.
+FINAL.other:we won {play.about.other.goals} to {play.about.focus.goals}
+FINAL.focus:we lost {play.about.focus.goals} to {play.about.other.goals}
+FINAL:{play.result.description}

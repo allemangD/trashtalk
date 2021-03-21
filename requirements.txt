@@ -1,0 +1,5 @@
+httpx
+humanize
+python-dateutil
+ratelimit
+discord.py
