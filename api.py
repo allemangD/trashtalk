@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import time
 
 import httpx
@@ -35,8 +36,10 @@ def rate_limit(delay):
     return dec
 
 
-@rate_limit(delay=10)
+# @rate_limit(delay=10)
 async def get(path, *params, **query):
+    logging.debug('GET api %r %r %r', path, params, query)
+
     async with CLIENT:
         query = {k: v for k, v in query.items() if v is not None}
         resp = await CLIENT.get(path.format(*params), params=query)

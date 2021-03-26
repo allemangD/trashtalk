@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import random
 
@@ -37,7 +38,9 @@ class EventSequence:
     async def fetch(self):
         data = await api.get('game/{}/feed/live', self.game_id)
         all_plays = data.liveData.plays.allPlays
+        logging.debug('received %s plays', len(all_plays))
         new_plays = all_plays[self.marker:]
+        logging.info('received %s new plays', len(new_plays))
         self.marker = len(all_plays)
 
         self.final = data.gameData.status.abstractGameState == 'Final'
@@ -56,6 +59,7 @@ class EventSequence:
         while not self.final:
             async for play in self.fetch():
                 yield play
+            await asyncio.sleep(10)
 
 
 def load(f):

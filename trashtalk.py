@@ -14,9 +14,9 @@ import processor
 DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
 DISCORD_CHANNEL = int(os.environ['DISCORD_CHANNEL'])
 FOCUS_TEAM_ID = int(os.environ['FOCUS_TEAM_ID'])
-LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
 
-logging.basicConfig(level=LOG_LEVEL)
+logging.basicConfig(level='DEBUG')
+logging.getLogger('discord').setLevel('WARNING')
 
 dcli = discord.Client()
 
@@ -61,7 +61,6 @@ async def on_ready():
 
         async for message in sequence:
             await channel.send(message)
-            await asyncio.sleep(1)
 
         logging.info('game over')
 
