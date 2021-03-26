@@ -22,7 +22,7 @@ dcli = discord.Client()
 
 
 async def next_game(states=('Preview', 'Live'), days=7):
-    start = datetime.date.today()
+    start = datetime.date.today() - datetime.timedelta(days=days)
     end = start + datetime.timedelta(days=days)
 
     schedule = await api.schedule(team_id=FOCUS_TEAM_ID, start_date=start, end_date=end)
