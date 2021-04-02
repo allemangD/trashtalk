@@ -10,18 +10,22 @@ import util
 import watcher
 
 
-def envbool(e):
+# Fetch environment variables
+
+def _bool(e):
     return e.lower() not in ('false', 'no', 'off', '0')
 
 
 DISCORD_TOKEN = os.environ['DISCORD_TOKEN']
 DISCORD_CHANNEL = int(os.environ['DISCORD_CHANNEL'])
-DRY_RUN = envbool(os.environ.get('DRY_RUN', 'true'))
+DRY_RUN = _bool(os.environ.get('DRY_RUN', 'true'))
 
 FOCUS_TEAM_ID = int(os.environ['FOCUS_TEAM_ID'])
 PATTERNS_FILE = os.environ['PATTERNS_FILE']
 
-SKIP_CURRENT = envbool(os.environ.get('SKIP_CURRENT', 'true'))
+SKIP_CURRENT = _bool(os.environ.get('SKIP_CURRENT', 'true'))
+
+# set up logging
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)-8s:%(name)-16s: %(message)s',
@@ -34,6 +38,8 @@ logging.getLogger('trash.main').setLevel('DEBUG')
 logging.getLogger('trash.watch').setLevel('DEBUG')
 logging.getLogger('trash.api.plays').setLevel('DEBUG')
 
+# main logic. this is the only place we have to worry about discord
+
 log = logging.getLogger('trash.main')
 
 dcli = discord.Client()
@@ -43,6 +49,7 @@ dcli = discord.Client()
 async def on_ready():
     channel: discord.TextChannel = dcli.get_channel(DISCORD_CHANNEL)
 
+    # print to log if dry run
     if not DRY_RUN:
         send = channel.send
     else:
@@ -66,14 +73,18 @@ async def on_ready():
         delay = date - utcnow - datetime.timedelta(seconds=30)
         log.info('waiting for game %s (%s)', game.gamePk, title)
 
+        # if we didn't have to sleep, game is in progress
         in_progress = not await util.sleep(delay)
         log.info('watching game %s (%s)', game.gamePk, title)
 
+        # send the message if the game is new or we aren't skipping
         if in_progress and SKIP_CURRENT:
             log.debug('not notifying because game is already in progress')
         else:
             await send(f'watching {title}')
 
+        # game watching logic is here.
+        # send is a callback so we don't have to worry about discord in that module
         await watcher.watch(
             game=game,
             focus_id=FOCUS_TEAM_ID,
