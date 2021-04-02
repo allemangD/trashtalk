@@ -13,6 +13,11 @@ COPY / .
 
 ENV DISCORD_TOKEN=''
 ENV DISCORD_CHANNEL=''
-ENV FOCUS_TEAM_ID='12'
+ENV DRY_RUN='false'
 
-CMD ["python3", "trashtalk.py"]
+ENV FOCUS_TEAM_ID='12'
+ENV PATTERNS_FILE='patterns/goals.txt'
+
+ENV SKIP_CURRENT='true'
+
+CMD ["python3", "main.py"]
