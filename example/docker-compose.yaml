@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  bot:
+    build: ..
+    environment:
+      DISCORD_TOKEN: '<TOKEN>'
+      DISCORD_CHANNEL: '<CHANNEL>'
+
+      # respond negatively to Carolina Hurricanes goals; positively to other team's goals
+      FOCUS_TEAM_ID: '12'
+      PATTERNS_FILE: 'patterns/goals.txt'
+
+      # Respond to past events, even if game is already in progress
+      SKIP_CURRENT: 'false'
