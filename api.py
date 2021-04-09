@@ -2,6 +2,7 @@ import datetime
 import logging
 
 import httpx
+import humanize
 
 import util
 
@@ -27,10 +28,24 @@ async def get(path, *params, **query):
 
     log.debug('GET api %r %r %r', path, params, query)
 
-    async with CLIENT:
-        query = {k: v for k, v in query.items() if v is not None}
-        resp = await CLIENT.get(path.format(*params), params=query)
-        return resp.json(object_hook=Bundle)
+    ATTEMPTS = 10
+    TIMEOUT_DELAY = datetime.timedelta(hours=1)
+
+    query = {k: v for k, v in query.items() if v is not None}
+
+    for attempt in range(10):
+        async with CLIENT:
+            try:
+                resp = await CLIENT.get(path.format(*params), params=query)
+                return resp.json(object_hook=Bundle)
+            except httpx.TimeoutException as ex:
+                log.error(
+                    'httpx timeout (%s/%s). waiting %s and trying again...',
+                    attempt, ATTEMPTS,
+                    humanize.precisedelta(TIMEOUT_DELAY),
+                )
+                await util.sleep(TIMEOUT_DELAY)
+    exit(18)
 
 
 async def schedule(team_id=None, start_date=None, end_date=None):
