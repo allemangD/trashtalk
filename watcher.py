@@ -28,16 +28,19 @@ class PatternLookup:
 
         self.log.info('loaded %s patterns', len(self.patterns))
 
-    def get(self, key):
+    def getall(self, key):
         options = [val for mask, val in self.patterns if key.startswith(mask)]
+        self.log.info('found %s options for key %r', len(options), key)
+        random.shuffle(options)
+        return options  # shuffle so the order is different each time
+
+    def get(self, key):
+        options = self.getall(key)
 
         if not options:
-            self.log.debug('found no options for key %r', key)
             return None
-        else:
-            self.log.info('found %s options for key %r', len(options), key)
 
-        result = random.choice(options)
+        result = options[0]
         self.log.debug('result for key %r: %r', key, result)
 
         return result
@@ -139,10 +142,18 @@ async def watch(game, focus_id, patterns_file, send, skip):
         event, play = transform(play)
         log.debug('%s: %s', event, play.result.description)
 
-        fmt = patterns.get(event)
-        if not fmt:
+        fmts = patterns.getall(event)
+        if not fmts:
             continue
 
-        text = fmt.format(event=event, play=play, game=game)
-        log.info('%s: %s', event, text)
-        await send(text)
+        for fmt in fmts:
+            try:
+                text = fmt.format(event=event, play=play, game=game)
+                log.info('%s: %s', event, text)
+                await send(text)
+                break
+            except (AttributeError, IndexError, KeyError) as ex:
+                msg, *_ = ex.args
+                logging.error('%s: Failed to format: %s', event, msg)
+        else:
+            logging.warning('%s: No valid format found. Skipping message.', event)
